@@ -1,6 +1,79 @@
-import { default as React } from "react";
+import { default as React, useState, useEffect } from "react";
+import { Error } from "./components/Error";
+import { HeadlineFigure } from "./components/HeadlineFigure";
+import axios from "axios";
 
-function App() {
+interface IResponseData {
+  close: string;
+  count: number;
+  endTime: string;
+  high: string;
+  low: string;
+  open: string;
+  pair: string;
+  startTime: string;
+  volume: string;
+  vwap: string;
+}
+
+interface IData {
+  price: number | null;
+  time: string | null;
+}
+
+interface IState extends IData {
+  //opted for 1 merged state, is it better to use useReducer instead?
+  error: string | null;
+  loading: boolean;
+}
+
+const url: string = "https://dev.ebitlabs.io/api/v1/fx/ETHUSD/ohlc";
+const REFRESH_RATE = 5000;
+
+const transformData = (data: IResponseData): IData => {
+  let { close, startTime } = data;
+  return { price: +close, time: startTime };
+};
+
+function App(): JSX.Element {
+  const [state, setState] = useState<IState>({
+    price: null,
+    time: null,
+    error: null,
+    loading: false,
+  });
+
+  const getData = async (): Promise<void> => {
+    try {
+      const { data } = await axios.get<IResponseData>(url);
+      const { price, time } = transformData(data);
+      setState((prevState) => ({
+        ...prevState,
+        price,
+        time,
+        loading: false,
+        error: null,
+      }));
+    } catch (error) {
+      setState((prevState) => ({
+        ...prevState,
+        error:
+          "Failed to fetch latest pricing data, the price indicated may have changed...",
+      }));
+    }
+  };
+
+  useEffect(() => {
+    // Only show spinner on first mount
+    setState((prevState) => ({ ...prevState, loading: true }));
+    getData();
+    setState((prevState) => ({ ...prevState, loading: false }));
+    const interval = setInterval(() => {
+      getData();
+    }, REFRESH_RATE);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="pt-12 bg-gray-50 sm:pt-16">
       <div className="px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
@@ -10,25 +83,11 @@ function App() {
           </h2>
         </div>
       </div>
-      <div className="pb-12 mt-10 bg-white sm:pb-16">
-        <div className="relative">
-          <div className="absolute inset-0 h-1/2 bg-gray-50" />
-          <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-            <div className="max-w-4xl mx-auto">
-              <dl className="w-1/3 mx-auto bg-white rounded-lg shadow-lg">
-                <div className="flex flex-col p-6 text-center border-t border-gray-100">
-                  <dt className="order-2 mt-2 text-lg font-medium leading-6 text-gray-500">
-                    ETH/USD
-                  </dt>
-                  <dd className="order-1 text-5xl font-extrabold text-gray-500">
-                    $1919<span className="text-2xl">.17</span>
-                  </dd>
-                </div>
-              </dl>
-            </div>
-          </div>
-        </div>
-      </div>
+      {state.error && <Error message={state.error} />}
+      <HeadlineFigure
+        loading={state.loading}
+        price={state.price}
+      ></HeadlineFigure>
     </div>
   );
 }
