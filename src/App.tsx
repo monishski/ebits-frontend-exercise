@@ -24,7 +24,6 @@ interface IData {
 interface IState extends IData {
   //opted for 1 merged state, is it better to use useReducer instead?
   error: string | null;
-  loading: boolean;
 }
 
 const url: string = "https://dev.ebitlabs.io/api/v1/fx/ETHUSD/ohlc";
@@ -40,7 +39,6 @@ function App(): JSX.Element {
     price: null,
     time: null,
     error: null,
-    loading: false,
   });
 
   const getData = async (): Promise<void> => {
@@ -64,10 +62,7 @@ function App(): JSX.Element {
   };
 
   useEffect(() => {
-    // Only show spinner on first mount
-    setState((prevState) => ({ ...prevState, loading: true }));
     getData();
-    setState((prevState) => ({ ...prevState, loading: false }));
     const interval = setInterval(() => {
       getData();
     }, REFRESH_RATE);
@@ -84,10 +79,7 @@ function App(): JSX.Element {
         </div>
       </div>
       {state.error && <Error message={state.error} />}
-      <HeadlineFigure
-        loading={state.loading}
-        price={state.price}
-      ></HeadlineFigure>
+      <HeadlineFigure price={state.price} time={state.time} />
     </div>
   );
 }
