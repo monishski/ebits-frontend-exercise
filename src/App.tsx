@@ -3,26 +3,11 @@ import { Error } from "./components/Error";
 import { HeadlineFigure } from "./components/HeadlineFigure";
 import axios from "axios";
 
-interface IResponseData {
-  close: string;
-  count: number;
-  endTime: string;
-  high: string;
-  low: string;
-  open: string;
-  pair: string;
-  startTime: string;
-  volume: string;
-  vwap: string;
-}
-
-interface IData {
-  price: number | null;
-  time: string | null;
-}
+import { IData, IResponseData } from "./types/interfaces";
 
 interface IState extends IData {
   //opted for 1 merged state, is it better to use useReducer instead?
+  prevPrice: number | null;
   error: string | null;
 }
 
@@ -36,6 +21,7 @@ const transformData = (data: IResponseData): IData => {
 
 function App(): JSX.Element {
   const [state, setState] = useState<IState>({
+    prevPrice: null,
     price: null,
     time: null,
     error: null,
@@ -45,13 +31,14 @@ function App(): JSX.Element {
     try {
       const { data } = await axios.get<IResponseData>(url);
       const { price, time } = transformData(data);
-      setState((prevState) => ({
-        ...prevState,
-        price,
-        time,
-        loading: false,
-        error: null,
-      }));
+      setState((prevState) => {
+        return {
+          prevPrice: prevState.price,
+          price,
+          time,
+          error: null,
+        };
+      });
     } catch (error) {
       setState((prevState) => ({
         ...prevState,
@@ -79,7 +66,11 @@ function App(): JSX.Element {
         </div>
       </div>
       {state.error && <Error message={state.error} />}
-      <HeadlineFigure price={state.price} time={state.time} />
+      <HeadlineFigure
+        prevPrice={state.prevPrice}
+        price={state.price}
+        time={state.time}
+      />
     </div>
   );
 }

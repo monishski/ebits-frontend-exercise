@@ -3,11 +3,13 @@ import { Spinner } from "./Spinner";
 import { Number } from "./Number";
 
 interface IHeadlineFigureProps {
+  prevPrice: number | null;
   price: number | null;
   time: string | null;
 }
 
 export const HeadlineFigure = ({
+  prevPrice,
   price,
   time,
 }: IHeadlineFigureProps): JSX.Element => {
@@ -31,7 +33,6 @@ export const HeadlineFigure = ({
     setTopOffset(pageY);
   };
 
-  console.log(price, showTooltip);
   return (
     <div className="pb-12 mt-4 bg-white sm:pb-16">
       <div className="relative">
@@ -48,7 +49,11 @@ export const HeadlineFigure = ({
                 <dt className="order-2 mt-4 text-lg font-medium leading-6 text-gray-500">
                   ETH/USD
                 </dt>
-                {!price ? <Spinner /> : <Number price={price} />}
+                {!price ? (
+                  <Spinner />
+                ) : (
+                  <Number prevPrice={prevPrice} price={price} />
+                )}
               </div>
               {!!price && showTooltip ? (
                 <div
