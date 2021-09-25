@@ -12,7 +12,10 @@ export const getAbsIntDiff = (a: number, b: number) => {
   return Math.abs(Math.floor(a) - Math.floor(b));
 };
 
-export const getDecimals = (n: number): string => {
-  //only first instance of 0 is removed
-  return (n - Math.floor(n)).toFixed(2).replace("0", "");
+export const getDecimals = (n: number): number => {
+  n = Math.abs(n);
+  return n - Math.floor(n);
 };
+
+export const getUrl = (pair: string): string =>
+  `https://dev.ebitlabs.io/api/v1/fx/${pair}/ohlc`;

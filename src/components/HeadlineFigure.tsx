@@ -3,12 +3,14 @@ import { Spinner } from "./Spinner";
 import { Number } from "./Number";
 
 interface IHeadlineFigureProps {
+  title: string | null;
   prevPrice: number | null;
   price: number | null;
   time: string | null;
 }
 
 export const HeadlineFigure = ({
+  title,
   prevPrice,
   price,
   time,
@@ -34,39 +36,26 @@ export const HeadlineFigure = ({
   };
 
   return (
-    <div className="pb-12 mt-4 bg-white sm:pb-16">
-      <div className="relative">
-        <div className="absolute inset-0 h-1/2 bg-gray-50" />
-        <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <dl
-              onMouseEnter={onMouseEnterHandler}
-              onMouseLeave={onMouseLeaveHandler}
-              onMouseMove={onMouseMoveHandler}
-              className="w-1/3 mx-auto bg-white rounded-lg shadow-lg"
-            >
-              <div className="flex flex-col p-6 text-center border-t border-gray-100 items-center">
-                <dt className="order-2 mt-4 text-lg font-medium leading-6 text-gray-500">
-                  ETH/USD
-                </dt>
-                {!price ? (
-                  <Spinner />
-                ) : (
-                  <Number prevPrice={prevPrice} price={price} />
-                )}
-              </div>
-              {!!price && showTooltip ? (
-                <div
-                  className="fixed bg-gray-100 border-gray-100 rounded-lg p-2 shadow text-gray-500"
-                  style={{ left: leftOffset, top: topOffset }}
-                >
-                  {time}
-                </div>
-              ) : null}
-            </dl>
-          </div>
-        </div>
+    <dl
+      onMouseEnter={onMouseEnterHandler}
+      onMouseLeave={onMouseLeaveHandler}
+      onMouseMove={onMouseMoveHandler}
+      className="w-1/3 mx-auto bg-white rounded-lg shadow-lg"
+    >
+      <div className="flex flex-col p-6 text-center border-t border-gray-100 items-center">
+        <dt className="order-2 mt-4 text-lg font-medium leading-6 text-gray-500">
+          {title}
+        </dt>
+        {!price ? <Spinner /> : <Number prevPrice={prevPrice} price={price} />}
       </div>
-    </div>
+      {!!price && showTooltip ? (
+        <div
+          className="fixed bg-gray-100 border-gray-100 rounded-lg p-2 shadow text-gray-500"
+          style={{ left: leftOffset, top: topOffset }}
+        >
+          {time}
+        </div>
+      ) : null}
+    </dl>
   );
 };
