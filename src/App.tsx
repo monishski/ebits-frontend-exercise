@@ -36,12 +36,14 @@ function App(): JSX.Element {
           <div className="relative px-4 mx-auto max-w-7xl sm:px-6 lg:px-8">
             <div className="flex max-w-4xl mx-auto">
               <HeadlineFigure
+                currencySign="$"
                 title="ETH/USD"
                 prevPrice={prevPriceUSD}
                 price={priceUSD}
                 time={timeUSD}
               />
               <HeadlineFigure
+                currencySign="£"
                 title="ETH/GBP"
                 prevPrice={prevPriceGBP}
                 price={priceGBP}

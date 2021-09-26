@@ -3,6 +3,7 @@ import { Spinner } from "./Spinner";
 import { Number } from "./Number";
 
 interface IHeadlineFigureProps {
+  currencySign: string;
   title: string | null;
   prevPrice: number | null;
   price: number | null;
@@ -10,6 +11,7 @@ interface IHeadlineFigureProps {
 }
 
 export const HeadlineFigure = ({
+  currencySign,
   title,
   prevPrice,
   price,
@@ -46,7 +48,15 @@ export const HeadlineFigure = ({
         <dt className="order-2 mt-4 text-lg font-medium leading-6 text-gray-500">
           {title}
         </dt>
-        {!price ? <Spinner /> : <Number prevPrice={prevPrice} price={price} />}
+        {!price ? (
+          <Spinner />
+        ) : (
+          <Number
+            currencySign={currencySign}
+            prevPrice={prevPrice}
+            price={price}
+          />
+        )}
       </div>
       {!!price && showTooltip ? (
         <div

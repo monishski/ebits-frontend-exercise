@@ -4,6 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import { DeltaColor } from "../types/enums";
 
 interface IPropsNumber {
+  currencySign: string;
   prevPrice: number | null;
   price: number;
 }
@@ -33,7 +34,7 @@ const getDecimalNumDigitsChanged = (curr: number, prev: number): number => {
   return 1;
 };
 
-export const Number = ({ prevPrice, price }: IPropsNumber) => {
+export const Number = ({ currencySign, prevPrice, price }: IPropsNumber) => {
   let _prevPrice = prevPrice || price; //if no prevPrice (e.g. initial load) default to price
   let delta = price - _prevPrice;
 
@@ -89,7 +90,10 @@ export const Number = ({ prevPrice, price }: IPropsNumber) => {
 
   return (
     <dd className={`flex items-end order-1 text-5xl font-extrabold`}>
-      <div className="flex">{int}</div>
+      <div className="flex">
+        <div className={`text-${DeltaColor.neutral}-500`}>{currencySign}</div>
+        {int}
+      </div>
       <span className="text-2xl flex">{decimal}</span>
     </dd>
   );
